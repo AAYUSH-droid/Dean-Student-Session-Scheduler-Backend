@@ -9,8 +9,8 @@ const createSessions = async () => {
   for (const day of daysOfWeek) {
     const rule = new schedule.RecurrenceRule();
     rule.dayOfWeek = day;
-    rule.hour = 3;
-    rule.minute = 1;
+    rule.hour = 13;
+    rule.minute = 5;
 
     schedule.scheduleJob(rule, async () => {
       const nextDate = new Date();

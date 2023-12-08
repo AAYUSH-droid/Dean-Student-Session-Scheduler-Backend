@@ -16,10 +16,10 @@ model Student {
 }
 
 model Dean {
-  universityId String @unique
+  universityId String  @unique
   name         String
   password     String
-  token        String
+  token        String?
 }
 
 model Session {

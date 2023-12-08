@@ -27,3 +27,27 @@ export const validateStudentToken = async (
     res.sendStatus(403);
   }
 };
+
+export const validateDeanToken = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const bearerHeader = req.headers['authorization'];
+
+  if (typeof bearerHeader !== 'undefined') {
+    const dean = await prisma.dean.findFirst({
+      where: {
+        token: bearerHeader,
+      },
+    });
+
+    if (dean) {
+      next();
+    } else {
+      res.sendStatus(403);
+    }
+  } else {
+    res.sendStatus(403);
+  }
+};

@@ -1,8 +1,7 @@
 import { NextFunction, Response } from 'express';
-import { CustomRequest } from '../controllers/StudentControllers';
+import { CustomRequest } from '../controllers/studentControllers';
 import { PrismaClient } from '@prisma/client';
-import jwt from 'jsonwebtoken';
-
+import { validate } from 'uuid';
 const prisma = new PrismaClient();
 
 export const validateStudentToken = async (
@@ -13,21 +12,15 @@ export const validateStudentToken = async (
   const bearerHeader = req.headers['authorization'];
 
   if (typeof bearerHeader !== 'undefined') {
-    try {
-      const providedToken = bearerHeader.split(' ')[1];
-      const decoded: any = jwt.verify(
-        providedToken,
-        process.env.JWT_SECRET as string
-      );
+    const student = await prisma.student.findFirst({
+      where: {
+        token: bearerHeader,
+      },
+    });
 
-      if (decoded && decoded.universityId) {
-        next();
-      } else {
-        res.sendStatus(403);
-      }
-    } catch (error) {
-      console.error(error);
-
+    if (student) {
+      next();
+    } else {
       res.sendStatus(403);
     }
   } else {

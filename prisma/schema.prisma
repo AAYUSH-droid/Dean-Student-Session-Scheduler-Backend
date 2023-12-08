@@ -8,17 +8,28 @@ datasource db {
 }
 
 model Student {
-  id            Int      @id @default(autoincrement())
-  universityId  Int   @unique
-  password      String
-  authToken     String?
-  createdAt     DateTime @default(now())
+  sno          Int     @id @default(autoincrement())
+  universityId String
+  name         String
+  password     String
+  token        String?
 }
 
 model Dean {
-  id              Int   @id @default(autoincrement())
-  universityId    String   @unique
-  password        String
-  authToken       String?
-  createdAt       DateTime @default(now())
+  universityId String @unique
+  name         String
+  password     String
+  token        String
+}
+
+model Session {
+  id   Int    @id @default(autoincrement())
+  time String
+}
+
+model Booking {
+  BookingId   String @id
+  studentName String
+  bookingTime String
+  sessionId   Int
 }

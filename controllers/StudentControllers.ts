@@ -61,7 +61,7 @@ export const studentController = {
   */
   login: async (req: Request, res: Response) => {
     const { universityId, password } = req.body;
-    // const serialNo = parseInt(req.params.SerialNo, 10); // Convert serial number to a number
+    // const serialNo = parseInt(req.params.SerialNo, 10);
     const { SerialNo } = req.params;
     const serialNo = parseInt(SerialNo, 10); // Convert serial number to a number
 

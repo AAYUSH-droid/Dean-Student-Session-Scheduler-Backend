@@ -1,5 +1,6 @@
 import schedule from 'node-schedule';
 import { PrismaClient } from '@prisma/client';
+import { formatInTimeZone } from 'date-fns-tz';
 
 const prisma = new PrismaClient();
 
@@ -10,15 +11,22 @@ const createSessions = async () => {
     const rule = new schedule.RecurrenceRule();
     rule.dayOfWeek = day;
     rule.hour = 1;
-    rule.minute = 7; //////
+    rule.minute = 34;
 
     schedule.scheduleJob(rule, async () => {
       const nextDate = new Date();
 
       try {
+        const istTime = formatInTimeZone(
+          nextDate,
+          'Asia/Kolkata',
+          'yyyy-MM-dd HH:mm:ssXXX'
+        );
+        console.log(istTime);
+
         await prisma.session.create({
           data: {
-            time: nextDate.toISOString(),
+            time: istTime,
           },
         });
         console.log(

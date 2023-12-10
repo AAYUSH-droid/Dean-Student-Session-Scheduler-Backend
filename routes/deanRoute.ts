@@ -6,6 +6,6 @@ import { validateDeanToken } from '../auth/verifyToken';
 
 router.route('/signup').post(deanController.register);
 router.route('/login').post(deanController.deanLogin);
-router.get('/getSessions', validateDeanToken, deanController.getSessions);
+router.get('/getSessions', validateDeanToken, deanController.getSessionBooking);
 
 export { router as deanRoutes };

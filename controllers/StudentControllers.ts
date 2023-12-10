@@ -28,8 +28,10 @@ export const studentController = {
       res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
   },
+  /*
   login: async (req: Request, res: Response) => {
     const { SerialNo, universityId, password } = req.body;
+
     try {
       //find student
       const student = await prisma.student.findFirst({
@@ -56,13 +58,63 @@ export const studentController = {
       res.sendStatus(500);
     }
   },
+  */
+  login: async (req: Request, res: Response) => {
+    const { universityId, password } = req.body;
+    // const serialNo = parseInt(req.params.SerialNo, 10); // Convert serial number to a number
+    const { SerialNo } = req.params;
+    const serialNo = parseInt(SerialNo, 10); // Convert serial number to a number
+
+    try {
+      // Find student
+      const student = await prisma.student.findFirst({
+        where: {
+          sno: serialNo,
+        },
+      });
+
+      if (student && student.sno) {
+        const token = uuidv4();
+        await prisma.student.update({
+          where: {
+            sno: serialNo,
+          },
+          data: {
+            token: token,
+          },
+        });
+
+        res.json({ token });
+      }
+    } catch (error) {
+      console.error(error);
+      res.sendStatus(500);
+    }
+  },
+
   //get sessions -- auth route
+  // getSession: async (req: Request, res: Response) => {
+  //   try {
+  //     const sessions = await prisma.session.findMany();
+  //     res.json({ sessions });
+  //   } catch (error) {
+  //     res.sendStatus(500);
+  //   }
+  // },
   getSession: async (req: Request, res: Response) => {
     try {
       const sessions = await prisma.session.findMany();
-      res.json({ sessions });
+      const sessionsIST = sessions.map((session) => ({
+        id: session.id,
+        time: new Date(session.time).toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+        }),
+      }));
+
+      res.json({ sessions: sessionsIST });
     } catch (error) {
-      res.sendStatus(500);
+      console.error('Error fetching sessions:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   },
 

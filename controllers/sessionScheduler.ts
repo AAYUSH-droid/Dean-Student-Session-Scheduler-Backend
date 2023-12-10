@@ -4,13 +4,13 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const createSessions = async () => {
-  const daysOfWeek = [1, 2, 3, 4, 5]; // Thursday: 4, Friday: 5
+  const daysOfWeek = [0, 1, 2, 3, 4, 5, 6]; // Thursday: 4, Friday: 5
 
   for (const day of daysOfWeek) {
     const rule = new schedule.RecurrenceRule();
     rule.dayOfWeek = day;
-    rule.hour = 13;
-    rule.minute = 5;
+    rule.hour = 1;
+    rule.minute = 7; //////
 
     schedule.scheduleJob(rule, async () => {
       const nextDate = new Date();

@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
+import { format, isBefore, isAfter } from 'date-fns';
 
 const prisma = new PrismaClient();
 
@@ -54,20 +55,32 @@ export const deanController = {
       res.sendStatus(500);
     }
   },
-  getSessions: async (req: Request, res: Response) => {
+  getSessionBooking: async (req: Request, res: Response) => {
     try {
-      const currentTime = new Date().toISOString();
-
-      const pendingSessions = await prisma.booking.findMany({
-        where: {
-          bookingTime: {
-            gte: currentTime,
-          },
-        },
+      const currentTime = new Date();
+      const allSessions = await prisma.booking.findMany({
         select: {
+          BookingId: true,
+          studentName: true,
           bookingTime: true,
+          sessionId: true,
         },
       });
+
+      const sessionsUTC = allSessions.map((session) => ({
+        BookingId: session.BookingId,
+        studentName: session.studentName,
+        bookingTime: format(
+          new Date(session.bookingTime),
+          "yyyy-MM-dd'T'HH:mm:ss.SSSX"
+        ),
+        sessionId: session.sessionId,
+      }));
+
+      const pendingSessions = sessionsUTC.filter((session) =>
+        // isBefore(new Date(session.bookingTime), currentTime)
+        isAfter(new Date(session.bookingTime), currentTime)
+      );
 
       res.json({ pendingSessions });
     } catch (error) {
